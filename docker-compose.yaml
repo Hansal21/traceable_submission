@@ -1,0 +1,35 @@
+version: '3.9'
+networks:
+  apitest:
+volumes:
+  database-volume:
+services:
+  database:
+    image: mysql:latest
+    healthcheck:
+      test: ["CMD", "ls"]
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: apitest
+      MYSQL_USER: hansal
+      MYSQL_PASSWORD: 2017033800101564
+    volumes:
+      - database-volume:/var/lib/mysql
+    networks:
+      - apitest
+
+  backend:
+    image: hansal21/apitest:latest
+    environment:
+      DB_URL: jdbc:mysql://database:3306/StatStopDB?createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: root@123
+    networks:
+      - apitest
+    ports:
+      - "8085:8085"
+    depends_on:
+      database:
+        condition: service_healthy
+
+
